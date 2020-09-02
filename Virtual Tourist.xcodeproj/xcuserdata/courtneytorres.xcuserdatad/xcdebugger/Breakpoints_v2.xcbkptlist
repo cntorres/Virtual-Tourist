@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "547EF596-F63D-406C-9CC4-AE1FAA25FC86"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D295B430-CE58-4FD4-A129-2999E8424DDF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Virtual Tourist/View Controllers/PhotoAlbumViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "14"
+            endingLineNumber = "14"
+            landmarkName = "PhotoAlbumViewController"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "D295B430-CE58-4FD4-A129-2999E8424DDF - 84366d87f61f85cc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Virtual_Tourist.PhotoAlbumViewController.dataController.getter : Swift.Optional&lt;Virtual_Tourist.DataController&gt;"
+                  moduleName = "Virtual Tourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/courtneytorres/Virtual%20Tourist/Virtual%20Tourist/View%20Controllers/PhotoAlbumViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "14"
+                  endingLineNumber = "14"
+                  offsetFromSymbolStart = "122">
+               </Location>
+               <Location
+                  uuid = "D295B430-CE58-4FD4-A129-2999E8424DDF - 7db459f21babed38"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Virtual_Tourist.PhotoAlbumViewController.dataController.setter : Swift.Optional&lt;Virtual_Tourist.DataController&gt;"
+                  moduleName = "Virtual Tourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/courtneytorres/Virtual%20Tourist/Virtual%20Tourist/View%20Controllers/PhotoAlbumViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "14"
+                  endingLineNumber = "14"
+                  offsetFromSymbolStart = "148">
+               </Location>
+               <Location
+                  uuid = "D295B430-CE58-4FD4-A129-2999E8424DDF - 7c7c0d0cddd78fcf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Virtual_Tourist.PhotoAlbumViewController.dataController.modify : Swift.Optional&lt;Virtual_Tourist.DataController&gt;"
+                  moduleName = "Virtual Tourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/courtneytorres/Virtual%20Tourist/Virtual%20Tourist/View%20Controllers/PhotoAlbumViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "18">
+               </Location>
+               <Location
+                  uuid = "D295B430-CE58-4FD4-A129-2999E8424DDF - a3fc476115fb2419"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Virtual_Tourist.PhotoAlbumViewController.dataController.modify : Swift.Optional&lt;Virtual_Tourist.DataController&gt; with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "Virtual Tourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/courtneytorres/Virtual%20Tourist/Virtual%20Tourist/View%20Controllers/PhotoAlbumViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "14"
+                  endingLineNumber = "14"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  uuid = "D295B430-CE58-4FD4-A129-2999E8424DDF - 96820ca5ee9f28a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Virtual_Tourist.PhotoAlbumViewController.init(nibName: Swift.Optional&lt;Swift.String&gt;, bundle: Swift.Optional&lt;__C.NSBundle&gt;) -&gt; Virtual_Tourist.PhotoAlbumViewController"
+                  moduleName = "Virtual Tourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/courtneytorres/Virtual%20Tourist/Virtual%20Tourist/View%20Controllers/PhotoAlbumViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "14"
+                  endingLineNumber = "14"
+                  offsetFromSymbolStart = "228">
+               </Location>
+               <Location
+                  uuid = "D295B430-CE58-4FD4-A129-2999E8424DDF - 71e5d0dd6ed2dede"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Virtual_Tourist.PhotoAlbumViewController.init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;Virtual_Tourist.PhotoAlbumViewController&gt;"
+                  moduleName = "Virtual Tourist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/courtneytorres/Virtual%20Tourist/Virtual%20Tourist/View%20Controllers/PhotoAlbumViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "14"
+                  endingLineNumber = "14"
+                  offsetFromSymbolStart = "148">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
