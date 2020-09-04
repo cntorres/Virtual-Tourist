@@ -20,7 +20,7 @@ class TravelLocationsViewController: UIViewController, NSFetchedResultsControlle
     var fetchResultsController : NSFetchedResultsController<Pin>!
     
     var pins : [Pin]!
-    
+        
     fileprivate func setupFetchResultsController() {
         let fetchRequest : NSFetchRequest<Pin> = Pin.fetchRequest()
         let sortDescriptor = NSSortDescriptor(key: "latitude", ascending: false)
@@ -42,7 +42,6 @@ class TravelLocationsViewController: UIViewController, NSFetchedResultsControlle
             annotation.coordinate = CLLocationCoordinate2DMake(pin.latitude, pin.longitude)
             mapView.addAnnotation(annotation)
         }
-        
     }
     
     override func viewDidLoad() {
@@ -54,8 +53,8 @@ class TravelLocationsViewController: UIViewController, NSFetchedResultsControlle
         configureMapWithPins()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         fetchResultsController = nil
     }
     
@@ -80,7 +79,11 @@ class TravelLocationsViewController: UIViewController, NSFetchedResultsControlle
         let pin = Pin(context: dataController.viewContext)
         pin.latitude = annotation.coordinate.latitude
         pin.longitude = annotation.coordinate.longitude
-        try? dataController.viewContext.save()
+        do {
+            try dataController.viewContext.save()
+        } catch  {
+            print(error)
+        }
     }
     
 }
@@ -95,6 +98,7 @@ TravelLocationsViewController : MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         let vc = storyboard?.instantiateViewController(withIdentifier: "PhotoAlbumVC") as! PhotoAlbumViewController
         vc.dataController = dataController
+        print(pins)
         for pin in pins {
             if pin.latitude == view.annotation?.coordinate.latitude && pin.longitude == view.annotation?.coordinate.longitude{
                 vc.pin = pin
@@ -106,6 +110,15 @@ TravelLocationsViewController : MKMapViewDelegate {
     }
 }
 
-
+//extension TravelLocationsViewController : NSFetchedResultsControllerDelegate {
+//    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+//        switch type {
+//        case .insert:
+//            pins = controller.fetchedObjects as? [Pin]
+//        default:
+//            break
+//        }
+//    }
+//}
 
 
