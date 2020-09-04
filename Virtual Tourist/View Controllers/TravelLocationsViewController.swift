@@ -11,7 +11,7 @@ import MapKit
 import CoreData
 
 
-class TravelLocationsViewController: UIViewController, NSFetchedResultsControllerDelegate {
+class TravelLocationsViewController: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
     
@@ -21,6 +21,33 @@ class TravelLocationsViewController: UIViewController, NSFetchedResultsControlle
     
     var pins : [Pin]!
         
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(addPinPoint))
+        mapView.addGestureRecognizer(tapGesture)
+        setupFetchResultsController()
+        configureMapWithPins()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        fetchResultsController = nil
+    }
+    
+
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupMap()
+    }
+    
+    fileprivate func setupMap() {
+        if let location = UserDefaults.standard.dictionary(forKey: "Location"){
+            mapView.setRegion(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: location["Latitude"]! as! CLLocationDegrees, longitude: location["Longitude"]! as! CLLocationDegrees), span: MKCoordinateSpan(latitudeDelta: location["Latitude Delta"]! as! CLLocationDegrees, longitudeDelta: location["Longitude Delta"] as! CLLocationDegrees)), animated: true)
+        }
+    }
+    
     fileprivate func setupFetchResultsController() {
         let fetchRequest : NSFetchRequest<Pin> = Pin.fetchRequest()
         let sortDescriptor = NSSortDescriptor(key: "latitude", ascending: false)
@@ -44,31 +71,6 @@ class TravelLocationsViewController: UIViewController, NSFetchedResultsControlle
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        navigationController?.setNavigationBarHidden(true, animated: true)
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(addPinPoint))
-        mapView.addGestureRecognizer(tapGesture)
-        setupFetchResultsController()
-        configureMapWithPins()
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        fetchResultsController = nil
-    }
-    
-    fileprivate func setupMap() {
-        if let location = UserDefaults.standard.dictionary(forKey: "Location"){
-            mapView.setRegion(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: location["Latitude"]! as! CLLocationDegrees, longitude: location["Longitude"]! as! CLLocationDegrees), span: MKCoordinateSpan(latitudeDelta: location["Latitude Delta"]! as! CLLocationDegrees, longitudeDelta: location["Longitude Delta"] as! CLLocationDegrees)), animated: true)
-        }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupMap()
-    }
-    
     
     @objc func addPinPoint(gestureRecognizer: UIGestureRecognizer) {
         let location = gestureRecognizer.location(in: mapView)
@@ -88,9 +90,7 @@ class TravelLocationsViewController: UIViewController, NSFetchedResultsControlle
     
 }
 
-extension
-    
-TravelLocationsViewController : MKMapViewDelegate {
+extension TravelLocationsViewController : MKMapViewDelegate {
     func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
         let location = ["Latitude":mapView.region.center.latitude, "Longitude": mapView.region.center.longitude,"Latitude Delta" : mapView.region.span.latitudeDelta, "Longitude Delta": mapView.region.span.longitudeDelta]
         UserDefaults.standard.set(location, forKey: "Location")
@@ -98,7 +98,6 @@ TravelLocationsViewController : MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         let vc = storyboard?.instantiateViewController(withIdentifier: "PhotoAlbumVC") as! PhotoAlbumViewController
         vc.dataController = dataController
-        print(pins)
         for pin in pins {
             if pin.latitude == view.annotation?.coordinate.latitude && pin.longitude == view.annotation?.coordinate.longitude{
                 vc.pin = pin
@@ -110,15 +109,16 @@ TravelLocationsViewController : MKMapViewDelegate {
     }
 }
 
-//extension TravelLocationsViewController : NSFetchedResultsControllerDelegate {
-//    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-//        switch type {
-//        case .insert:
-//            pins = controller.fetchedObjects as? [Pin]
-//        default:
-//            break
-//        }
-//    }
-//}
+extension TravelLocationsViewController : NSFetchedResultsControllerDelegate {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            pins = controller.fetchedObjects as? [Pin]
+        default:
+            break
+        }
+    }
+}
+
 
 
