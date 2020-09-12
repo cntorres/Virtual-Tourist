@@ -30,11 +30,9 @@ class TravelLocationsViewController: UIViewController {
         configureMapWithPins()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        fetchResultsController = nil
+    deinit {
+        fetchResultsController = nil 
     }
-    
 
     
     override func viewWillAppear(_ animated: Bool) {
@@ -98,7 +96,7 @@ extension TravelLocationsViewController : MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         let vc = storyboard?.instantiateViewController(withIdentifier: "PhotoAlbumVC") as! PhotoAlbumViewController
         vc.dataController = dataController
-        for pin in pins {
+        for pin in fetchResultsController.fetchedObjects! {
             if pin.latitude == view.annotation?.coordinate.latitude && pin.longitude == view.annotation?.coordinate.longitude{
                 vc.pin = pin
                 mapView.deselectAnnotation(view.annotation, animated: true)
