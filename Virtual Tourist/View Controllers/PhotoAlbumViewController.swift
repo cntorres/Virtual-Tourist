@@ -24,8 +24,7 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
     @IBOutlet weak var noImagesLabel: UILabel!
     
     @IBOutlet weak var collectionView: UICollectionView!
-    
-    
+
     @IBOutlet weak var mapView: MKMapView!
     
     override func viewDidLoad() {
@@ -36,17 +35,14 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
         annotation.coordinate.longitude = pin.longitude
         mapView.addAnnotation(annotation)
         mapView.setCenter(annotation.coordinate, animated: true)
-        FlickrCalls.getPhotoDictionary(latitude: (annotation.coordinate.latitude), longitude: (annotation.coordinate.longitude)) {
-            response,error in
-            if let response = response {
-                self.photoInfo = response.photos.photo
-                self.collectionView.reloadData()
-                if self.photos.count == 0 {
-                    self.noImagesLabel.isHidden = false
-                    self.collectionView.isHidden = true
-                    
+        if photos.count == 0 {
+            FlickrCalls.getPhotoDictionary(latitude: (annotation.coordinate.latitude), longitude: (annotation.coordinate.longitude)) {
+                response,error in
+                if let response = response {
+                    self.photoInfo = response.photos.photo
                 }
             }
+            addPhotos()
         }
     }
     
@@ -67,50 +63,43 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
         } catch {
             fatalError("The fetch could not be performed: \(error.localizedDescription)")
         }
-        collectionView.reloadData()
+        fetchedImages()
     }
-    
+    func fetchedImages() {
+        for photo in fetchedResultsController.fetchedObjects!{
+            photos.append(UIImage(data: photo.photo!)!)
+        }
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
     
     func addPhotos(){
         for photo in photoInfo {
             FlickrCalls.getPhotos(farmId: photo.farm, serverId: photo.server, id: photo.id, secret: photo.secret){
                  image, error in
-                 if let image = image {
-                    self.photos.append(image)
-                 }
-                let photo = Photo(context: self.dataController.viewContext)
-                photo.photo = image?.pngData()
-                do {
-                    try self.dataController.viewContext.save()
-                } catch {
-                    print(error)
+                if let image = image?.pngData() {
+                    let photo = Photo(context: self.dataController.viewContext)
+                    photo.photo = image
+                    photo.pin = self.pin
+                    do {
+                        try self.dataController.viewContext.save()
+                    } catch {
+                        print(error)
+                    }
                 }
-                
-             }
+
+            }
         }
-
+        fetchedImages()
     }
-    
-
+         
 }
+
 extension PhotoAlbumViewController : UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCollectionView", for: indexPath) as! PhotoCollectionViewCell
-//        cell.photo.image = photos[indexPath.row]
-        FlickrCalls.getPhotos(farmId: photoInfo[indexPath.row].farm, serverId: photoInfo[indexPath.row].server, id: photoInfo[indexPath.row].id, secret: photoInfo[indexPath.row].secret){
-             image, error in
-             if let image = image {
-                cell.photo.image = image
-             }
-            let photo = Photo(context: self.dataController.viewContext)
-            photo.photo = image?.pngData()
-            do {
-                try self.dataController.viewContext.save()
-            } catch {
-                print(error)
-            }
-
-        }
+        cell.photo.image = photos[indexPath.row]
         return cell
     }
     
@@ -118,7 +107,7 @@ extension PhotoAlbumViewController : UICollectionViewDelegate, UICollectionViewD
         return fetchedResultsController.sections?.count ?? 1
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        photos.count
+        return photos.count
     }
     
 }
