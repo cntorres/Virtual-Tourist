@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import CoreData
 
-class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDelegate {
+class PhotoAlbumViewController: UIViewController {
 
     var dataController : DataController!
     
@@ -22,6 +22,9 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
     var fetchedResultsController : NSFetchedResultsController<Photo>!
         
     @IBOutlet weak var noImagesLabel: UILabel!
+    
+    @IBOutlet weak var newCollectionButton: UIButton!
+    
     
     @IBOutlet weak var collectionView: UICollectionView!
 
@@ -40,9 +43,9 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
                 response,error in
                 if let response = response {
                     self.photoInfo = response.photos.photo
+                    self.addPhotos()
                 }
             }
-            addPhotos()
         }
     }
     
@@ -65,35 +68,72 @@ class PhotoAlbumViewController: UIViewController, NSFetchedResultsControllerDele
         }
         fetchedImages()
     }
+    
     func fetchedImages() {
         for photo in fetchedResultsController.fetchedObjects!{
             photos.append(UIImage(data: photo.photo!)!)
         }
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
+//        DispatchQueue.main.async {
+        collectionView.reloadData()
+        collectionView.isHidden = false
+        newCollectionButton.isEnabled = true
+            
+//        }
+    }
+    
+    @IBAction func getNewCollection(_ sender: Any) {
+        for photo in fetchedResultsController.fetchedObjects! {
+            dataController.viewContext.delete(photo)
+            do{
+                try dataController.viewContext.save()
+            } catch {
+                print(error)
+            }
+        }
+        photos = []
+        collectionView.reloadData()
+        let annotation = MKPointAnnotation()
+        annotation.coordinate.latitude = pin.latitude
+        annotation.coordinate.longitude = pin.longitude
+        mapView.addAnnotation(annotation)
+        mapView.setCenter(annotation.coordinate, animated: true)
+        FlickrCalls.getPhotoDictionary(latitude: (annotation.coordinate.latitude), longitude: (annotation.coordinate.longitude)) {
+            response,error in
+            if let response = response {
+                self.photoInfo = response.photos.photo
+                self.addPhotos()
+            }
         }
     }
     
     func addPhotos(){
+        let group = DispatchGroup()
         for photo in photoInfo {
             FlickrCalls.getPhotos(farmId: photo.farm, serverId: photo.server, id: photo.id, secret: photo.secret){
                  image, error in
+                group.enter()
                 if let image = image?.pngData() {
                     let photo = Photo(context: self.dataController.viewContext)
                     photo.photo = image
                     photo.pin = self.pin
+                    group.leave()
                     do {
                         try self.dataController.viewContext.save()
                     } catch {
                         print(error)
                     }
                 }
-
             }
         }
-        fetchedImages()
+        group.notify(queue: DispatchQueue.main){
+            print("Update Button")
+//            self.collectionView.isHidden = false
+            print("Photos sizes", self.photos.count)
+            self.newCollectionButton.isEnabled = true
+            
+
+        }
     }
-         
 }
 
 extension PhotoAlbumViewController : UICollectionViewDelegate, UICollectionViewDataSource {
@@ -110,4 +150,21 @@ extension PhotoAlbumViewController : UICollectionViewDelegate, UICollectionViewD
         return photos.count
     }
     
+}
+
+extension PhotoAlbumViewController : NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    }
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        collectionView.reloadData()
+        print("Photos sizes", self.photos.count)
+    }
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            photos.append(UIImage(data: (anObject as AnyObject).photo!)!)
+        default:
+            break
+        }
+    }
 }

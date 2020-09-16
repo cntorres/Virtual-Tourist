@@ -58,7 +58,7 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="gKS-hB-DJT"/>
                                 </connections>
                             </mapView>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="LeA-DI-oHI">
+                            <collectionView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="LeA-DI-oHI">
                                 <rect key="frame" x="0.0" y="300" width="414" height="556"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="VXe-qe-Rw7">
@@ -101,12 +101,15 @@
                                     <outlet property="delegate" destination="DLF-1a-5vG" id="RMy-W6-e7K"/>
                                 </connections>
                             </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a9h-9b-PHr">
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a9h-9b-PHr">
                                 <rect key="frame" x="0.0" y="856" width="414" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="qD5-40-ZpE"/>
                                 </constraints>
                                 <state key="normal" title="New Collection"/>
+                                <connections>
+                                    <action selector="getNewCollection:" destination="DLF-1a-5vG" eventType="touchUpInside" id="5h2-jL-QUZ"/>
+                                </connections>
                             </button>
                             <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Images" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aD0-qm-MGe">
                                 <rect key="frame" x="166" y="428" width="82" height="40"/>
@@ -139,6 +142,7 @@
                     <connections>
                         <outlet property="collectionView" destination="LeA-DI-oHI" id="gCq-cd-IEZ"/>
                         <outlet property="mapView" destination="78b-gX-Cf9" id="28s-nJ-bJF"/>
+                        <outlet property="newCollectionButton" destination="a9h-9b-PHr" id="eIE-f7-Yd3"/>
                         <outlet property="noImagesLabel" destination="aD0-qm-MGe" id="N9i-6I-Cqf"/>
                     </connections>
                 </viewController>
