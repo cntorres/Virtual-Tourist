@@ -16,6 +16,8 @@ class PhotoAlbumViewController: UIViewController {
     
     var pin : Pin!
     
+    var annotation : MKAnnotation!
+    
     var photoInfo : [PhotoInfo] = []
     var photos : [UIImage] = []
     
@@ -33,9 +35,6 @@ class PhotoAlbumViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupFetchedResultsController()
-        let annotation = MKPointAnnotation()
-        annotation.coordinate.latitude = pin.latitude
-        annotation.coordinate.longitude = pin.longitude
         mapView.addAnnotation(annotation)
         mapView.setCenter(annotation.coordinate, animated: true)
         if photos.count == 0 {
@@ -76,7 +75,10 @@ class PhotoAlbumViewController: UIViewController {
         for photo in fetchedResultsController.fetchedObjects!{
             photos.append(UIImage(data: photo.photo!)!)
         }
-        displayCollectionView()
+        if photos.count != 0 {
+            collectionView.reloadData()
+            newCollectionButton.isEnabled = true
+        }
     }
     
     @IBAction func getNewCollection(_ sender: Any) {
@@ -90,11 +92,6 @@ class PhotoAlbumViewController: UIViewController {
         }
         photos = []
         collectionView.reloadData()
-        let annotation = MKPointAnnotation()
-        annotation.coordinate.latitude = pin.latitude
-        annotation.coordinate.longitude = pin.longitude
-        mapView.addAnnotation(annotation)
-        mapView.setCenter(annotation.coordinate, animated: true)
         FlickrCalls.getPhotoDictionary(latitude: (annotation.coordinate.latitude), longitude: (annotation.coordinate.longitude)) {
             response,error in
             if let response = response {
@@ -105,14 +102,7 @@ class PhotoAlbumViewController: UIViewController {
     }
     
     func displayCollectionView(){
-        if photos != nil || photos.count != 0 {
-            collectionView.reloadData()
-            newCollectionButton.isEnabled = true
-        }else {
-            #warning("Fix showing no Image label")
-//            collectionView.isHidden = true
-//            noImagesLabel.isHidden = false
-        }
+
     }
     func addPhotos(){
         DispatchQueue.global(qos: .userInitiated).async {
@@ -136,7 +126,13 @@ class PhotoAlbumViewController: UIViewController {
             }
             group.wait()
             DispatchQueue.main.async {
-                self.displayCollectionView()
+                if self.photos.count != 0 {
+                    self.collectionView.reloadData()
+                    self.newCollectionButton.isEnabled = true
+                } else {
+                    self.noImagesLabel.isHidden = false
+                    self.collectionView.isHidden = true
+                }
             }
         }
     }

@@ -99,6 +99,7 @@ extension TravelLocationsViewController : MKMapViewDelegate {
         for pin in fetchResultsController.fetchedObjects! {
             if pin.latitude == view.annotation?.coordinate.latitude && pin.longitude == view.annotation?.coordinate.longitude{
                 vc.pin = pin
+                vc.annotation = view.annotation
                 mapView.deselectAnnotation(view.annotation, animated: true)
             }
         }
