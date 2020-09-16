@@ -29,10 +29,7 @@ class TravelLocationsViewController: UIViewController {
         setupFetchResultsController()
         configureMapWithPins()
     }
-    
-    deinit {
-        fetchResultsController = nil 
-    }
+
 
     
     override func viewWillAppear(_ animated: Bool) {

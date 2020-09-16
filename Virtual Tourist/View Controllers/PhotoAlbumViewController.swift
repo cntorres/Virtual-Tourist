@@ -52,7 +52,7 @@ class PhotoAlbumViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(true)
+        super.viewWillDisappear(animated)
         navigationController?.isNavigationBarHidden = true
     }
     

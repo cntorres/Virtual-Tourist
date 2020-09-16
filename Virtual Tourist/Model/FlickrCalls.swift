@@ -19,7 +19,7 @@ class FlickrCalls {
         var stringValue : String{
             switch self {
             case .photoDictionary(let latitude, let longitude):
-                return "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&lat=\(latitude)&lon=\(longitude)&format=json"
+                return "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&lat=\(latitude)&lon=\(longitude)&format=json&per_page=20&page=\(Int.random(in: 0..<5))"
             case .retrievePhotos(let farmId,let serverId, let id, let secret):
                 return "https://farm\(farmId).staticflickr.com/\(serverId)/\(id)_\(secret).jpg"
                     
