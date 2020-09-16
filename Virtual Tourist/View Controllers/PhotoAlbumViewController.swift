@@ -43,6 +43,9 @@ class PhotoAlbumViewController: UIViewController {
                 response,error in
                 if let response = response {
                     self.photoInfo = response.photos.photo
+                    DispatchQueue.main.async {
+                        self.collectionView.reloadData()
+                    }
                     self.addPhotos()
                 }
             }
@@ -73,12 +76,7 @@ class PhotoAlbumViewController: UIViewController {
         for photo in fetchedResultsController.fetchedObjects!{
             photos.append(UIImage(data: photo.photo!)!)
         }
-//        DispatchQueue.main.async {
-        collectionView.reloadData()
-        collectionView.isHidden = false
-        newCollectionButton.isEnabled = true
-            
-//        }
+        displayCollectionView()
     }
     
     @IBAction func getNewCollection(_ sender: Any) {
@@ -106,32 +104,40 @@ class PhotoAlbumViewController: UIViewController {
         }
     }
     
+    func displayCollectionView(){
+        if photos != nil || photos.count != 0 {
+            collectionView.reloadData()
+            newCollectionButton.isEnabled = true
+        }else {
+            #warning("Fix showing no Image label")
+//            collectionView.isHidden = true
+//            noImagesLabel.isHidden = false
+        }
+    }
     func addPhotos(){
-        let group = DispatchGroup()
-        for photo in photoInfo {
-            FlickrCalls.getPhotos(farmId: photo.farm, serverId: photo.server, id: photo.id, secret: photo.secret){
-                 image, error in
+        DispatchQueue.global(qos: .userInitiated).async {
+            let group = DispatchGroup()
+            for photo in self.photoInfo {
                 group.enter()
-                if let image = image?.pngData() {
-                    let photo = Photo(context: self.dataController.viewContext)
-                    photo.photo = image
-                    photo.pin = self.pin
-                    group.leave()
-                    do {
-                        try self.dataController.viewContext.save()
-                    } catch {
-                        print(error)
+                FlickrCalls.getPhotos(farmId: photo.farm, serverId: photo.server, id: photo.id, secret: photo.secret){
+                     image, error in
+                    if let image = image?.pngData() {
+                        let photo = Photo(context: self.dataController.viewContext)
+                        photo.photo = image
+                        photo.pin = self.pin
+                        do {
+                            try self.dataController.viewContext.save()
+                        } catch {
+                            print(error)
+                        }
                     }
+                    group.leave()
                 }
             }
-        }
-        group.notify(queue: DispatchQueue.main){
-            print("Update Button")
-//            self.collectionView.isHidden = false
-            print("Photos sizes", self.photos.count)
-            self.newCollectionButton.isEnabled = true
-            
-
+            group.wait()
+            DispatchQueue.main.async {
+                self.displayCollectionView()
+            }
         }
     }
 }
@@ -139,7 +145,13 @@ class PhotoAlbumViewController: UIViewController {
 extension PhotoAlbumViewController : UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCollectionView", for: indexPath) as! PhotoCollectionViewCell
-        cell.photo.image = photos[indexPath.row]
+        if photos.count == 0 {
+            cell.photo.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 0.196139283)
+            cell.photo.image = UIImage()
+        } else {
+            cell.photo.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+            cell.photo.image = photos[indexPath.row]
+        }
         return cell
     }
     
@@ -147,18 +159,22 @@ extension PhotoAlbumViewController : UICollectionViewDelegate, UICollectionViewD
         return fetchedResultsController.sections?.count ?? 1
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if photos.count == 0 {
+            return photoInfo.count
+        }
         return photos.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        photos.remove(at: indexPath.row)
+        let photoToDelete = fetchedResultsController.object(at: indexPath)
+        dataController.viewContext.delete(photoToDelete)
+        collectionView.reloadData()
     }
     
 }
 
 extension PhotoAlbumViewController : NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-    }
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        collectionView.reloadData()
-        print("Photos sizes", self.photos.count)
-    }
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         switch type {
         case .insert:

@@ -35,15 +35,10 @@ class FlickrCalls {
         request.httpMethod = "GET"
         let task = URLSession.shared.dataTask(with: request){ (data, response, error) in
             guard let data = data else{
-                DispatchQueue.main.async {
                     completion(nil, error)
-                }
                 return
             }
-
-            DispatchQueue.main.async {
                 completion(data, nil)
-            }
         }
         task.resume()
     }
@@ -58,7 +53,6 @@ class FlickrCalls {
                     let range = (14..<data!.count-1)
                     let newData = data!.subdata(in: range)
                     let response = try decoder.decode(PhotoDictionaryResponse.self, from: newData)
-                    
                     completion(response, nil)
                 } catch  {
                     completion(nil, error)
@@ -72,13 +66,13 @@ class FlickrCalls {
     class func getPhotos(farmId : Int,  serverId: String, id: String, secret: String, completion: @escaping (UIImage?, Error?)->Void) {
         taskForGETRequest(url: Endpoints.retrievePhotos(farmId, serverId, id, secret).url) {
             data, error in
-            guard let image = UIImage(data: data!) else {
-                completion(nil, error)
+            if let data = data {
+                let image = UIImage(data: data)
+                completion(image, nil)
                 return
             }
-            completion(image, nil)
+            completion(nil, error)
+
         }
     }
-    
-    
 }
